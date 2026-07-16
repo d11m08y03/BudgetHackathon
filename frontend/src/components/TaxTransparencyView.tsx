@@ -74,7 +74,9 @@ export default function TaxTransparencyView() {
         const parsed: KeyMeasureCard[] = data.data
           .map((record: { sector: string; measures_list: string }) => {
             try {
-              const parsed = JSON.parse(record.measures_list);
+              // Strip markdown code fences if present (```json ... ```)
+              const raw = record.measures_list.replace(/^```json\s*/i, "").replace(/```\s*$/, "").trim();
+              const parsed = JSON.parse(raw);
               // measures_list has shape { sectors: [{ sector, measures: [{title, description}] }] }
               const firstSector = parsed.sectors?.[0];
               return {
